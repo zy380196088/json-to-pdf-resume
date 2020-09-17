@@ -1,0 +1,82 @@
+{
+  "personal": {
+    "name": "玉米",
+    "job": "前端工程师",
+    "info": [{
+        "label": "年龄",
+        "value": "2X岁"
+      },
+      {
+        "label": "工作经验",
+        "value": "3年"
+      },
+      {
+        "label": "毕业院校",
+        "value": "XXXX大学 软件工程(本科)"
+      },
+      {
+        "label": "联系电话",
+        "value": "176********"
+      },
+      {
+        "label": "邮箱",
+        "value": "********@qq.com"
+      }
+    ],
+    "avatarUrl":""
+  },
+  "skill": [
+    "Web开发：PHP/Hack/Node",
+    "Web框架：ThinkPHP/Yaf/Yii/Lavaral/LazyPHP",
+    "前端框架：Bootstrap/AngularJS/EmberJS/HTML5/Cocos2dJS/ionic",
+    "前端工具：Bower/Gulp/SaSS/LeSS/PhoneGap",
+    "数据库相关：MySQL/PgSQL/PDO/SQLite",
+    "版本管理、文档和自动化部署工具：Svn/Git/PHPDoc/Phing/Composer",
+    "单元测试：PHPUnit/SimpleTest/Qunit",
+    "云和开放平台：SAE/BAE/AWS/微博开放平台/微信应用开发"
+  ],
+  "experience": [{
+      "company": "A公司",
+      "timeStart": "2017.04",
+      "timeEnd": "至今",
+      "project": [{
+          "name": "aaa项目",
+          "use": "Vue + Vuex + stylus ...",
+          "details": "......"
+        },
+        {
+          "name": "bbb项目",
+          "use": "Vue + Vuex + stylus + Echarts",
+          "details": "......"
+        }
+      ]
+    },
+    {
+      "company": "B数据",
+      "timeStart": "2016.07",
+      "timeEnd": "2017.02",
+      "project": [{
+          "name": "xxx数据看板",
+          "use": "Echarts.js , D3.js , Sea.js , JQuery",
+          "details": "...........项目工作亮点概要..........."
+        },
+        {
+          "name": "xxx雷达项目",
+          "use": "Echarts.js , D3.js , Sea.js , JQuery",
+          "details": "...........项目工作亮点概要..........."
+        }
+      ]
+    }
+  ],
+  "evaluation": [
+    "工作认真、负责，善于沟通交流,注重团队协作精神;",
+    "具备良好的学习、创新精神，能够快速接受新技术",
+    "不断追求自己的兴趣爱好，有良好的审美;",
+    "性格开朗，善于沟通，有较好的组织协调能力;"
+  ],
+  "expectation": {
+    "post": "前端开发",
+    "workplace": "XX",
+    "salary": "面议"
+  }
+}

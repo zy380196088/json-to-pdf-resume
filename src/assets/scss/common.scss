@@ -1,0 +1,11 @@
+@for $i from 1 through 12 {
+  .col-#{$i} {
+    float: left;
+    width: percentage($number: ($i / 12));
+    height: 100%;
+  }
+}
+
+.bold {
+  font-weight: bold;
+}
