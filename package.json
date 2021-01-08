@@ -1,7 +1,7 @@
 {
   "name": "vue-resume",
   "version": "1.0.0",
-  "description": "resumen project wish vue",
+  "description": "resume project wish vue",
   "author": "Joy <380196088@qq.com>",
   "private": true,
   "scripts": {
@@ -17,6 +17,7 @@
     "jspdf": "^1.4.0",
     "lib-flexible": "^0.3.2",
     "normalize.css": "^8.0.0",
+    "pdfjs-dist": "^2.5.207",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1"
   },

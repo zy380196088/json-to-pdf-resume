@@ -62,92 +62,142 @@
 
 </template>
 
-<script type="text/javascript">
-import html2Canvas from 'html2Canvas';
-import JsPDF from 'jspdf';
+<script type="text/ecmascript-6">
+  import html2Canvas from 'html2Canvas';
+  import JsPDF from 'jspdf';
+  import PDFJS from 'pdfjs-dist';
+  import {
+    TextLayerBuilder
+  } from 'pdfjs-dist/web/pdf_viewer';
 
-export default {
-  data() {
-    return {
-      personal: {
-        name: '',
-        job: '',
-      }, // 个人信息
-      skill: [], // 职业技能
-      experience: [], // 工作经验
-      evaluation: [], // 自我评价
-      expectation: {}, // 工作期望
-    };
-  },
-  components: {},
-  created() {
-    this.getData();
-  },
-  methods: {
-    exportPDF(idSelect) {
-      const pdfDom = document.getElementById(idSelect);
-      pdfDom.style.background = '#FFFFFF'; // 设置背景色
-      const c = document.createElement('canvas');
-      // 导出来的pdf打印出来还是比较模糊的
-      let opts = {
-        scale: 2, //
-        canvas: c,
-        logging: true,
-        width: pdfDom.width,
-        height: pdfDom.height,
-        useCORS: true, // 配置:开启跨域
-        taintTest: true, // 在渲染器测试图片
-        allowTaint: true, // 允许加载跨域的图片
+
+  export default {
+    data() {
+      return {
+        personal: {
+          name: '',
+          job: '',
+        }, // 个人信息
+        skill: [], // 职业技能
+        experience: [], // 工作经验
+        evaluation: [], // 自我评价
+        expectation: {}, // 工作期望
       };
+    },
+    components: {},
+    created() {
+      this.getData();
+    },
+    methods: {
+      exportPDF(idSelect) {
+        const pdfDom = document.getElementById(idSelect);
+        pdfDom.style.background = '#FFFFFF'; // 设置背景色
+        const c = document.createElement('canvas');
+        // 导出来的pdf打印出来还是比较模糊的
+        let opts = {
+          scale: 2, //
+          canvas: c,
+          logging: true,
+          width: pdfDom.width,
+          height: pdfDom.height,
+          useCORS: true, // 配置:开启跨域
+          taintTest: true, // 在渲染器测试图片
+          allowTaint: true, // 允许加载跨域的图片
+        };
 
-      c.width = pdfDom.width;
-      c.height = pdfDom.height;
-      c.getContext('2d').scale(2, 2);
-      window.html2Canvas = html2Canvas;
-      html2Canvas(pdfDom, opts).then((canvas) => {
-        // 开始canvas截图
-        // 开始准备工作
-        const contentWidth = canvas.width;
-        const contentHeight = canvas.height;// 内容为画布宽高
-        const pageHeight = (contentWidth / 592.28) * 841.89;
-        let leftHeight = contentHeight;
-        let position = 0;
-        // 此处图片格式可以是PNG，也可是JPEG，注意：需要考虑Browser支持的图片格式
-        const imgWidth = 592.28;
-        const imgHeight = (592.28 / contentWidth) * contentHeight;
-        const context = canvas.getContext('2d');
-        // 然后将画布缩放，将图像放大两倍画到画布上
-        context.scale(2, 2);
-        const pageData = canvas.toDataURL('image/jpeg', 1); // 将图片转为 base64
-        pdfDom.style.display = 'none'; // 开始将图片转换为PDF // 设置纸张大小，方向
-        const PDF = new JsPDF('', 'pt', 'a4');
-        if (leftHeight < pageHeight) { // 如果内容高度小与一页纸的高度-单页
-          PDF.addImage(pageData, 'jpeg', 0, 0, imgWidth, imgHeight);
-        } else {
-          while (leftHeight > 0) { // 多页
-            PDF.addImage(pageData, 'jpeg', 0, position, imgWidth, imgHeight);
-            leftHeight -= pageHeight;
-            position -= 841.89;
-            if (leftHeight > 0)PDF.addPage();
+        c.width = pdfDom.width;
+        c.height = pdfDom.height;
+        c.getContext('2d').scale(2, 2);
+        window.html2Canvas = html2Canvas;
+        html2Canvas(pdfDom, opts).then((canvas) => {
+          // 开始canvas截图
+          // 开始准备工作
+          const contentWidth = canvas.width;
+          const contentHeight = canvas.height; // 内容为画布宽高
+          const pageHeight = (contentWidth / 592.28) * 841.89;
+          let leftHeight = contentHeight;
+          let position = 0;
+          // 此处图片格式可以是PNG，也可是JPEG，注意：需要考虑Browser支持的图片格式
+          const imgWidth = 592.28;
+          const imgHeight = (592.28 / contentWidth) * contentHeight;
+          const context = canvas.getContext('2d');
+          // 然后将画布缩放，将图像放大两倍画到画布上
+          context.scale(2, 2);
+          const pageData = canvas.toDataURL('image/jpeg', 1); // 将图片转为 base64
+          pdfDom.style.display = 'none'; // 开始将图片转换为PDF // 设置纸张大小，方向
+          const PDF = new JsPDF('', 'pt', 'a4');
+          if (leftHeight < pageHeight) { // 如果内容高度小与一页纸的高度-单页
+            PDF.addImage(pageData, 'jpeg', 0, 0, imgWidth, imgHeight);
+          } else {
+            while (leftHeight > 0) { // 多页
+              PDF.addImage(pageData, 'jpeg', 0, position, imgWidth, imgHeight);
+              leftHeight -= pageHeight;
+              position -= 841.89;
+              if (leftHeight > 0) PDF.addPage();
+            }
+          } // 保存PDF
+          const pdfName = `${this.personal.name}-${this.personal.job}.pdf`;
+          PDF.save(pdfName);
+        });
+      },
+      getData() {
+        this.$axios.get('/static/data/FE.json').then((res) => {
+          this.personal = res.data.personal;
+          this.skill = res.data.skill;
+          this.experience = res.data.experience;
+          this.evaluation = res.data.evaluation;
+          this.expectation = res.data.expectation;
+        }).catch((error) => {
+          throw new Error([error]);
+        });
+      },
+      renderPdf(scale) {
+        PDFJS.workerSrc = require('pdfjs-dist/build/pdf.worker.min')
+        // 当 PDF 地址为跨域时，pdf 应该已流的形式传输，否则会出现pdf损坏无法展示
+        PDFJS.getDocument(this.pdfUrl).then(pdf => {
+          // 得到PDF的总的页数
+          let totalPage = pdf.numPages
+          let idName = 'canvas-pdf-'
+          // 根据总的页数创建相同数量的canvas
+          this.createCanvas(totalPage, idName)
+          for (let i = 1; i <= totalPage; i++) {
+            pdf.getPage(i).then((page) => {
+              let pageDiv = document.getElementById(`page-${i}`)
+              let viewport = page.getViewport(scale)
+              let canvas = document.getElementById(idName + i)
+              let context = canvas.getContext('2d')
+              canvas.height = viewport.height
+              canvas.width = viewport.width
+              this.viewHeight = viewport.height
+              let renderContext = {
+                canvasContext: context,
+                viewport
+              }
+              // 如果你只是展示pdf而不需要复制pdf内容功能，则可以这样写render
+              // page.render(renderContext) 如果你需要复制则像下面那样写利用text-layer
+              page.render(renderContext).then(() => {
+                return page.getTextContent()
+              }).then((textContent) => {
+                // 创建文本图层div
+                const textLayerDiv = document.createElement('div')
+                textLayerDiv.setAttribute('class', 'textLayer')
+                // 将文本图层div添加至每页pdf的div中
+                pageDiv.appendChild(textLayerDiv)
+                // 创建新的TextLayerBuilder实例
+                let textLayer = new TextLayerBuilder({
+                  textLayerDiv: textLayerDiv,
+                  pageIndex: page.pageIndex,
+                  viewport: viewport
+                })
+                textLayer.setTextContent(textContent)
+                textLayer.render()
+              })
+            })
           }
-        }// 保存PDF
-        const pdfName = `${this.personal.name}-${this.personal.job}.pdf`;
-        PDF.save(pdfName);
-      });
+        })
+      },
     },
-    getData() {
-      this.$axios.get('/static/data/Demo.json').then((res) => {
-        this.personal = res.data.personal;
-        this.skill = res.data.skill;
-        this.experience = res.data.experience;
-        this.evaluation = res.data.evaluation;
-        this.expectation = res.data.expectation;
-      }).catch((error) => {
-        throw new Error([error]);
-      });
-    },
-  },
-};
+  };
 
 </script>
 
@@ -205,7 +255,7 @@ export default {
   }
 
   .personal {
-    width: 100%;
+    width: 100%;  
     height: 100%;
     color: #fff;
     background-color: $primaryC;
